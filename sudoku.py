@@ -33,6 +33,7 @@ class Sudoku:
     def draw(self):
         self.window.fill(WHITE)
         self.drawTitle(self.window)
+        self.drawGrid(self.window)
         pygame.display.update()
 
 
@@ -44,6 +45,22 @@ class Sudoku:
         textRect.center = (WIDTH / 2,  50) 
         
         self.window.blit(text, textRect) 
+
+
+
+    def drawGrid(self, window):
+        pygame.draw.rect(window, BLACK, (gridPos[0], gridPos[1], WIDTH - 150, HEIGHT - 150), 2)
+        for x in range(9):
+            if x % 3 == 0:
+                # vertical line
+                pygame.draw.line(window, BLACK, (gridPos[0] + (x * cellSize), gridPos[1]), (gridPos[0] + (x * cellSize), gridPos[1] + 450), 2)
+                # horizontal line
+                pygame.draw.line(window, BLACK, (gridPos[0], gridPos[1] + (x * cellSize)), (gridPos[0] + 450, gridPos[1] + (x * cellSize)), 2)
+            else:
+                # vertical line
+                pygame.draw.line(window, BLACK, (gridPos[0] + (x * cellSize), gridPos[1]), (gridPos[0] + (x * cellSize), gridPos[1] + 450))
+                # horizontal line
+                pygame.draw.line(window, BLACK, (gridPos[0], gridPos[1] + (x * cellSize)), (gridPos[0] + 450, gridPos[1] + (x * cellSize)))
 
 
     
