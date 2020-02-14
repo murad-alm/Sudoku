@@ -8,6 +8,7 @@ COLOR_WHITE = (255, 255, 255)
 COLOR_GREEN = (13, 242, 201)
 COLOR_BLUE = (78, 197, 241)
 COLOR_GRAY = (57, 81, 70)
+COLOR_LOCKED_CELLS = (155, 151, 156)
 
 
 testBoard = [[0 for x in range(9)] for x in range(9)]

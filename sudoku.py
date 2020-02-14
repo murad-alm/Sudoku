@@ -15,6 +15,8 @@ class Sudoku:
         self.playingButtons = []
         self.idleButtons = []
         self.endGameButtons = []
+        self.lockedCells = []
+        self.load()
         self.initButtons()
         self.font = pygame.font.Font('freesansbold.ttf', cellSize // 2)
 
@@ -58,15 +60,22 @@ class Sudoku:
         for button in self.playingButtons:
             button.draw(self.window)
         
+        # draw user's selection color
         if (self.selectedCell):
             self.drawSelection(self.window, self.selectedCell)
 
+        # draw the lockedCells in another color on top of the selection color (prevent highlighting the lockedCells)
+        self.drawLockedCells(self.window, self.lockedCells)
+
+        # draw numbers inside the cells after drawing the selection / lockedCells color
         self.drawNumbers(self.window)
-            
+        
+        # finally draw the grid
         self.drawGrid(self.window)
         pygame.display.update()
 
-#######  HELPING FUNCTIONS  #######
+
+#######  DRAW HELPING FUNCTIONS  #######
 
     def drawTitle(self, window):
         # font = pygame.font.Font('freesansbold.ttf', 32) 
@@ -90,14 +99,18 @@ class Sudoku:
         pygame.draw.rect(window, COLOR_GREEN, ((pos[0] * cellSize) + gridPos[0], (pos[1] * cellSize) + gridPos[1], cellSize, cellSize))
 
 
+    def drawLockedCells(self, window, lockedCells):
+        for cell in lockedCells:
+            pygame.draw.rect(window, COLOR_LOCKED_CELLS, (cell[0] * cellSize + gridPos[0], cell[1] * cellSize + gridPos[1], cellSize, cellSize))
+
     def drawNumbers(self, window):
         for y, row in enumerate(self.grid):
             for x, number in enumerate(row):
                 if (number != 0):
                     pos = [(x * cellSize) + gridPos[0], (y * cellSize) + gridPos[1]]
                     self.textToScreen(self.window, str(number), pos)
-        pass
 
+##########################################################
     
     def textToScreen(self, window, text, pos):
         font = self.font.render(text, True, COLOR_BLACK)
@@ -125,3 +138,14 @@ class Sudoku:
             # first calculate the mouse position in relation to the grid position (starting by the top left corner)
             # then divide by cell size to get the coordinates of the clicked cell
             return ((self.mousePos[0] - gridPos[0]) // cellSize, (self.mousePos[1] - gridPos[1]) // cellSize)
+
+
+    def load(self):
+        # loop through the grid and set all cells which has a non-zero value as 'LockedCells'
+        # the lockedCells will be rendered in another color and will be locked so the user can't modify their original value
+        
+        for y, row in enumerate(self.grid):
+            for x, num in enumerate(row):
+                if (num != 0):
+                    self.lockedCells.append([x, y])
+        print(self.lockedCells)
