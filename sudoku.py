@@ -16,8 +16,8 @@ class Sudoku:
         self.idleButtons = []
         self.endGameButtons = []
         self.lockedCells = []
-        self.load()
         self.initButtons()
+        self.load()
         self.font = pygame.font.Font('freesansbold.ttf', cellSize // 2)
 
 
@@ -38,6 +38,7 @@ class Sudoku:
             if (event.type == pygame.QUIT):
                 self.running = False
 
+            # mouse clicks
             if (event.type == pygame.MOUSEBUTTONDOWN):
                 selectedCell = self.mouseClickOnGrid()
                 if (selectedCell):
@@ -45,6 +46,11 @@ class Sudoku:
                 else:
                     print('not on board')
                     self.selectedCell = None
+
+            # keyboard input
+            if event.type == pygame.KEYDOWN:
+                if (self.selectedCell != None) and (self.selectedCell not in self.lockedCells) and (self.isValidKey(event.unicode)):
+                    self.grid[self.selectedCell[1]][self.selectedCell[0]] = int(event.unicode)
 
     
     def playing_update(self):
@@ -137,7 +143,7 @@ class Sudoku:
             # return the coordinates of the clicked cell in the grid
             # first calculate the mouse position in relation to the grid position (starting by the top left corner)
             # then divide by cell size to get the coordinates of the clicked cell
-            return ((self.mousePos[0] - gridPos[0]) // cellSize, (self.mousePos[1] - gridPos[1]) // cellSize)
+            return [(self.mousePos[0] - gridPos[0]) // cellSize, (self.mousePos[1] - gridPos[1]) // cellSize]
 
 
     def load(self):
@@ -148,4 +154,12 @@ class Sudoku:
             for x, num in enumerate(row):
                 if (num != 0):
                     self.lockedCells.append([x, y])
-        print(self.lockedCells)
+
+
+    def isValidKey(self, key):
+        try:
+            int(key)
+            if int(key) != 0:
+                return True
+        except:
+            return False
