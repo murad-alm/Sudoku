@@ -1,6 +1,8 @@
 import pygame, sys
 from settings import *
 from button import *
+import requests
+from bs4 import BeautifulSoup
 
 class Sudoku:
     def __init__(self):
@@ -8,7 +10,8 @@ class Sudoku:
         self.window = pygame.display.set_mode((WIDTH, HEIGHT))
         pygame.display.set_caption(WINDOW_TITLE) 
         self.running = True
-        self.grid = finishedBoard
+        #self.grid = testBoard2
+        self.grid = self.getPuzzle("4")
         self.selectedCell = None
         self.mousePos = None
         self.state = "playing"
@@ -22,6 +25,7 @@ class Sudoku:
         self.initButtons()
         self.setLockedCells()
         self.font = pygame.font.Font('freesansbold.ttf', cellSize // 2)
+
 
 
     def run(self):
@@ -188,7 +192,25 @@ class Sudoku:
 
 
 
-#######  OTHER FUNCTIONS  #######        
+#######  OTHER FUNCTIONS  #######     
+
+    def getPuzzle(self, difficulty):
+        #getPuzzle takes a number between 1 and 4 as a string which indicates to the board difficulty
+        html_doc = requests.get("https://nine.websudoku.com/?level={}".format(difficulty)).content
+        soup = BeautifulSoup(html_doc)
+        
+        data = []
+        for cid in BOARD_IDs:
+            data.append(soup.find('input', id = cid))
+
+        board = [[0 for x in range(9)] for x in range(9)]
+        for index, cell in enumerate(data):
+            try:
+                board[index // 9][index % 9] = int(cell['value']) #index//9  will give the row, and index%9 will give the column
+            except:
+                pass
+
+        return board
     
     def textToScreen(self, window, text, pos):
         font = self.font.render(text, True, COLOR_BLACK)
